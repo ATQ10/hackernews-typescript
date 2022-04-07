@@ -1,0 +1,30 @@
+// 1
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// 2
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 3
+model Link {
+  id          Int      @id @default(autoincrement())   // 4
+  createdAt   DateTime @default(now())  // 5
+  description String
+  url         String
+  postedBy    User?    @relation(name: "PostedBy", fields: [postedById], references: [id])  // 2
+  postedById  Int?
+  voters      User[]   @relation(name: "Votes")  // 1
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  links    Link[] @relation(name: "PostedBy")  // 2
+  votes    Link[] @relation(name: "Votes")  // 1
+}
